@@ -1,0 +1,6 @@
+.spyproject
+*pycache*
+*.png
+00_Results
+Examples
+training.py

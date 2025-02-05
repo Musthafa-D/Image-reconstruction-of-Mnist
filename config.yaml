@@ -1,0 +1,76 @@
+optimized: 
+  learning_rate_exp: 
+    - float
+    - -3.5
+    - -3.4
+  optimizer:
+    - categorical
+    - [RAdam]
+
+data:
+  path: Datasets
+  dataset: mnist
+  task: diffusion
+  scaler: "01"
+  shuffle_train: True
+  batch_size: 40
+    
+study:  
+  number_of_trials: 2
+  direction: minimize
+  optimization_target: FidScore
+  study_name: Encoder_Decoder # Encoder_Decoder for unconditional,
+  # Conditional_Encoder_Decoder for conditional.
+  
+learning:
+  num_epochs: 10
+  testevery: 1
+  criterion: MSELoss
+  en_de_model: 'en_de' # 'en_de' or 'conditional_en_de' only.
+  layer: 'linear' # 'linear' or 'nlrl' only.
+  
+network:
+  en_de:
+    initial_in_channels: 1
+    final_out_channels: 1
+    hidden_channels: 16
+    device: "cuda"
+
+  conditional_en_de:
+    num_labels: 10
+    label_dim: 256
+    initial_in_channels: 1
+    final_out_channels: 1
+    hidden_channels: 16
+    device: "cuda"
+  
+classifier_nlrl: # make no changes
+  filter_growth_rate: 2
+  dropout_rate: 0.2
+  final_channel: 8
+  activation_function: RReLU
+  initial_out_channels: 32
+  final_layer: 'nlrl'
+  num_blocks: 3
+
+classifier_linear: # make no changes
+  filter_growth_rate: 2
+  dropout_rate: 0.2
+  final_channel: 8
+  activation_function: RReLU
+  initial_out_channels: 32
+  final_layer: 'linear'
+  num_blocks: 3
+
+discriminator_nlrl: # make no changes
+  name: "GAN" # GAN for en_de and CGAN for c_en_de
+  hidden_channels: 64
+  noise_dim: 9 
+  final_layer: 'nlrl'
+
+discriminator_linear: # make no changes
+  name: "GAN" # GAN for en_de and CGAN for c_en_de
+  hidden_channels: 64
+  noise_dim: 9 
+  final_layer: 'linear'
+
